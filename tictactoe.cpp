@@ -107,10 +107,6 @@ class Board {
                     } else if (diagonalCheck1 || diagonalCheck2) {
                         cout << gameArray[1][1] << " has won the game!";
                     }
-                    cout << horizontalCheck;
-                    cout << verticalCheck;
-                    cout << diagonalCheck1;
-                    cout << diagonalCheck2;
                     return true;
 
                 } else if (i == 2) { // Only return false when all the squares have been cycled through
