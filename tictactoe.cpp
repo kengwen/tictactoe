@@ -1,4 +1,5 @@
 #include <iostream>
+#include <vector>
 
 using namespace std;
 
@@ -12,36 +13,61 @@ int inputBetweenValidRange(int var, string text, int upperBound, int lowerBound)
 
         cout << text;
         cin >> var;
-    } while (var < upperBound || var > lowerBound);
+    } while (var > upperBound || var < lowerBound);
 
     return var;
 }
 
 class Board {
     public:
-        // Declaring empty 3x3 array
-        char gameArray[3][3] = {
-            {' ', ' ', ' '},
-            {' ', ' ', ' '},
-            {' ', ' ', ' '}
-        };
+        // Declaring empty 2D vector
+        vector<vector<char>> gameArray;
         bool whichTurn = true;
+        int numSides;
+
+        Board() {
+            // Allows the board to be minimum 3x3 and maximum 10x10
+            numSides = inputBetweenValidRange(numSides, "What size board would you like to play? (ex. input 3 for 3x3 board): ", 10, 3);
+
+            // Appends a ' ' to each element in the vectors
+            for (int i = 0; i < numSides; i++) {
+                gameArray.push_back({});
+                for (int j = 0; j < numSides; j++) {
+                    gameArray[i].push_back(' ');
+                }
+            }
+        }
 
         void drawBoard() {
             cout << endl;
-            for (int row = 0; row < 3; row++) {
-                for (int col = 0; col < 3; col++) {
-                    cout << "| " << gameArray[row][col] << " ";
-                    
+            for (int row = -1; row < numSides; row++) {
+                for (int col = 0; col < numSides; col++) {
+                    if (row == -1) {
+                        cout << "  " << col + 1 << " "; // Displays the column numbers above the board
+                    } else {
+                        cout << "| " << gameArray[row][col] << " ";
+                    }
+
                     // Once the last column has been printed, it goes to the next line
-                    if (col == 2) {
-                        cout << "|" << endl;
+                    if (col == numSides - 1) {
+                        if (row == -1) {
+                            cout << "  " << endl;
+                        } else {
+                            cout << "| " << row + 1 << endl; // Displays the row numbers beside the board
+                        }
                     }
 
                 }
-                // Prints the row divider only after row 1 and 2
-                if (row < 2) {
-                    cout << "+-+-+-+-+-+-+" << endl;
+                // Prints the row divider in between each row
+                if (row < numSides - 1 && row >= 0) {
+                    cout << "+-+-+-+-+-+-+"; // Default row divider for a 3x3 board
+
+                    if (numSides > 3) {
+                        for (int i = 0; i < numSides - 3; i++) {
+                            cout << "-+-+"; // Adds this string for every additional box above 3
+                        }
+                    }
+                    cout << endl;
                 }
             }
             cout << endl;
@@ -59,11 +85,11 @@ class Board {
             }
 
             // Asks the user to input which square to attack
-            row = inputBetweenValidRange(row, "Choose a row(1, 2, or 3): ", 1, 3);
-            row--;
-
-            col = inputBetweenValidRange(col, "Choose a column(1, 2, or 3): ", 1, 3);
+            col = inputBetweenValidRange(col, "Choose a column: ", numSides, 1);
             col--;
+            
+            row = inputBetweenValidRange(row, "Choose a row: ", numSides, 1);
+            row--;
 
             // Ensures that you cannot attack a space that has already been attacked
             int repeat = 0;
@@ -73,11 +99,11 @@ class Board {
                     cout << "Spot already taken" << endl;
                 }
 
-                row = inputBetweenValidRange(row, "Choose a row(1, 2, or 3): ", 1, 3);
-                row--;
-
-                col = inputBetweenValidRange(col, "Choose a column(1, 2, or 3): ", 1, 3);
+                col = inputBetweenValidRange(col, "Choose a column: ", numSides, 1);
                 col--;
+
+                row = inputBetweenValidRange(row, "Choose a row: ", numSides, 1);
+                row--;
             }
 
             if (whichTurn == true) {
