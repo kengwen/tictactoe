@@ -32,6 +32,7 @@ class Board {
             // Appends a ' ' to each element in the vectors
             for (int i = 0; i < numSides; i++) {
                 gameArray.push_back({});
+
                 for (int j = 0; j < numSides; j++) {
                     gameArray[i].push_back(' ');
                 }
@@ -117,25 +118,46 @@ class Board {
         }
 
         bool checkWinCondition() {
-            for (int i = 0; i < 3; i++) {
-                bool horizontalCheck = gameArray[i][0] == gameArray[i][1] && gameArray[i][0] == gameArray[i][2] && gameArray[i][0] != ' ';
-                bool verticalCheck = gameArray[0][i] == gameArray[1][i] && gameArray[0][i] == gameArray[2][i] && gameArray[0][i] != ' ';
+            /*
                 bool diagonalCheck1 = gameArray[0][0] == gameArray[1][1] && gameArray[0][0] == gameArray[2][2] && gameArray[1][1] != ' ';
                 bool diagonalCheck2 = gameArray[0][2] == gameArray[1][1] && gameArray[0][2] == gameArray[2][0] && gameArray[1][1] != ' ';
+            */
 
-                // Check all possible win conditions
-                if (horizontalCheck || verticalCheck || diagonalCheck1 || diagonalCheck2) {
-                    drawBoard();
-                    if (horizontalCheck) {
-                        cout << gameArray[i][0] << " has won the game!";
-                    } else if (verticalCheck) {
-                        cout << gameArray[0][i] << " has won the game!";
-                    } else if (diagonalCheck1 || diagonalCheck2) {
-                        cout << gameArray[1][1] << " has won the game!";
+            // Turn all X's into 1 and turn all O's into -1
+            vector<vector<int>> dummyVector; // Create a dummy vector to convert the characters into integers
+
+            for (int i = 0; i < numSides; i++) {
+                dummyVector.push_back({});
+
+                for (int j = 0; j < numSides; j++) {
+                    if (gameArray[i][j] == 'X') {
+                        dummyVector[i].push_back(1);
+                    } else if (gameArray[i][j] == 'O') {
+                        dummyVector[i].push_back(-1);
+                    } else {
+                        dummyVector[i].push_back(0);
                     }
-                    return true;
+                }
+            }
 
-                } else if (i == 2) { // Only return false when all the squares have been cycled through
+            for (int i = 0; i < numSides; i++) {
+                int horizontalSum = 0;
+                int verticalSum = 0;
+                for (int j = 0; j < numSides; j++) {
+                    // Sum horizontally and vertically
+                    horizontalSum += dummyVector[i][j];
+                    verticalSum += dummyVector[j][i];
+                }
+
+                if (horizontalSum == numSides || verticalSum == numSides) {
+                    drawBoard();
+                    cout << "X has won the game";
+                    return true;
+                } else if (horizontalSum == -numSides || verticalSum == -numSides) {
+                    drawBoard();
+                    cout << "O has won the game";
+                    return true;
+                } else if (i == numSides - 1) { // Only return false once the outer loop ends
                     return false;
                 }
             }
