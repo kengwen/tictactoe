@@ -118,11 +118,6 @@ class Board {
         }
 
         bool checkWinCondition() {
-            /*
-                bool diagonalCheck1 = gameArray[0][0] == gameArray[1][1] && gameArray[0][0] == gameArray[2][2] && gameArray[1][1] != ' ';
-                bool diagonalCheck2 = gameArray[0][2] == gameArray[1][1] && gameArray[0][2] == gameArray[2][0] && gameArray[1][1] != ' ';
-            */
-
             // Turn all X's into 1 and turn all O's into -1
             vector<vector<int>> dummyVector; // Create a dummy vector to convert the characters into integers
 
@@ -140,20 +135,32 @@ class Board {
                 }
             }
 
+            int diagonalSum = 0;
+            int reverseDiagonalSum = 0;
             for (int i = 0; i < numSides; i++) {
                 int horizontalSum = 0;
                 int verticalSum = 0;
+
+                // Horizontal and vertical checking
                 for (int j = 0; j < numSides; j++) {
                     // Sum horizontally and vertically
                     horizontalSum += dummyVector[i][j];
                     verticalSum += dummyVector[j][i];
                 }
 
-                if (horizontalSum == numSides || verticalSum == numSides) {
+                // Diagonal checking
+                diagonalSum += dummyVector[0+i][0+i];
+                reverseDiagonalSum += dummyVector[0+i][numSides-1-i];
+
+                //  Printing statements depending on if X or O won
+                bool xhasWon = horizontalSum == numSides || verticalSum == numSides || diagonalSum == numSides || reverseDiagonalSum == numSides;
+                bool oHasWon = horizontalSum == -numSides || verticalSum == -numSides || diagonalSum == -numSides || reverseDiagonalSum == -numSides;
+
+                if (xhasWon) {
                     drawBoard();
                     cout << "X has won the game";
                     return true;
-                } else if (horizontalSum == -numSides || verticalSum == -numSides) {
+                } else if (oHasWon) {
                     drawBoard();
                     cout << "O has won the game";
                     return true;
@@ -175,7 +182,7 @@ int main() {
         hasWon = game.checkWinCondition();
         numTurns++;
 
-        if (numTurns == 9) {
+        if (numTurns == game.numSides * game.numSides) {
             game.drawBoard();
             cout << "Game ends in a draw";
             break;
